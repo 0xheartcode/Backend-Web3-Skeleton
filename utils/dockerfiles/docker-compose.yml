@@ -1,0 +1,12 @@
+services:
+  # MakefileServiceName
+  light-express: # Light build of Express mail app, simply copies the `build/` folder that needs to exist before execution. Default.
+    build:
+      context: ../../
+      dockerfile: ./utils/dockerfiles/Dockerfile.standard
+    labels:
+      - "com.example.description=express container nginx"
+    ports:
+      -  ${PORT}:80
+    image: ${DOCKER_IMAGE_NAME:-boilerplate-backend}
+
