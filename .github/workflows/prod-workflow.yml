@@ -1,9 +1,9 @@
 name: Prod 
 
 on:
-    push:
-      branches:
-        - prod
+  push:
+    branches:
+      - prod
 
 jobs:
   cloud_build-local_docker:

@@ -1,9 +1,10 @@
 name: Testnet
 
 on:
-    push:
-      branches:
-        - staging 
+  push:
+    branches:
+      - testnet 
+
   workflow_dispatch:
     inputs:
       reason:
