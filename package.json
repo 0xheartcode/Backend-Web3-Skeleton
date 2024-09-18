@@ -17,6 +17,7 @@
     "form-data": "^4.0.0",
     "google-auth-library": "^9.14.0",
     "googleapis": "^140.0.1",
+    "mongodb": "^6.9.0",
     "open": "^10.1.0",
     "whatwg-url": "^14.0.0"
   },

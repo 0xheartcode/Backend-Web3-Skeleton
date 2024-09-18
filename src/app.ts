@@ -1,9 +1,12 @@
 import express from 'express';
 import routes from './routes';
-import { checkRequiredEnvVariables } from './dbcode/dbSetup';
+import { checkRequiredEnvVariables, initializeDatabase } from './dbcode/dbSetup';
 
 // Check required environment variables
 checkRequiredEnvVariables();
+
+// Initialize database connection
+await initializeDatabase();
 
 const app = express();
 const PORT = 8080;

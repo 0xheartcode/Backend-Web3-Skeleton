@@ -102,7 +102,6 @@ jobs:
             rm ${{env.DOCKER_IMAGE_NAME}}.tar
             rm Makefile
             cd ..
-            # We're keeping the folder, because of the shared files
             rmdir ${{env.FOLDER_NAME}}
 
       - name: Print end of script message

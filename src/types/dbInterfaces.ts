@@ -5,8 +5,8 @@ export interface ITokenResult {
 }
 
 export interface IDbClient {
-  setBearerTokenDB(token: string): boolean;
-  isValidBearerTokenDB(token: string): boolean;
-  getCurrentBearerTokenDB(): string | null;
-  changeBearerTokenDB(currentToken: string, newToken: string): boolean;
+  setBearerTokenDB(token: string): Promise<boolean>;
+  isValidBearerTokenDB(token: string): Promise<boolean>;
+  getCurrentBearerTokenDB(): Promise<string | null>;
+  changeBearerTokenDB(currentToken: string, newToken: string): Promise<boolean>;
 }
