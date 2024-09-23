@@ -18,10 +18,13 @@ app.use(express.json()); // for parsing application/json
 app.use('/', routes);
 
 // Error handling middleware
-app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
+app.use((err: Error, _req: express.Request, res: express.Response, next: express.NextFunction) => {
   console.error(err.stack);
   res.status(500).send('Something broke!');
+  next(err);  // Pass the error to Express's default error handler
 });
+
+
 
 // Start the server
 const server = app.listen(PORT, () => {
