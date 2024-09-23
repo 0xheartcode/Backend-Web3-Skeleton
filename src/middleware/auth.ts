@@ -6,7 +6,6 @@ export async function authenticateToken(req: Request, res: Response, next: NextF
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return res.status(401).json({ error: 'Unauthorized: No bearer token provided' });
   }
-
   const bearerToken = authHeader.split(' ')[1];
   try {
     const isValid = await dbClient.isValidBearerTokenDB(bearerToken);
@@ -14,7 +13,7 @@ export async function authenticateToken(req: Request, res: Response, next: NextF
       return res.status(401).json({ error: 'Unauthorized: Invalid bearer token' });
     }
     next();
-  } catch (error) {
+  } catch {
     return res.status(500).json({ error: 'Internal Server Error' });
   }
 }
