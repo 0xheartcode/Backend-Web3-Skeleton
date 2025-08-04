@@ -28,6 +28,19 @@ jobs:
       - name: Check version
         run: make version
 
+      - name: Set COMPOSE_PROJECT_NAME
+        run: |
+          # Get folder name (same as Makefile DOCKER_NAME_BASE)
+          FOLDER_NAME=$(basename $(pwd) | tr '[:upper:]' '[:lower:]')
+
+          # Get branch name (same as Makefile BRANCH_NAME)
+          BRANCH_NAME="_${GITHUB_REF#refs/heads/}"
+
+          # Build project name (same pattern as docker compose creates)
+          export COMPOSE_PROJECT_NAME="${FOLDER_NAME}${BRANCH_NAME}_image"
+          echo "COMPOSE_PROJECT_NAME=$COMPOSE_PROJECT_NAME" >> $GITHUB_ENV
+          echo "Using COMPOSE_PROJECT_NAME: $COMPOSE_PROJECT_NAME"
+
       - name: Build the docker image
         run: make composebuild-prod
 

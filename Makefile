@@ -93,7 +93,24 @@ unsafe_prune: ##Forced docker prune without safety prompt. Cleans up more space.
 ##@ Custom Docker Commands
 .PHONY: get_repository_name
 get_repository_name: ##Gets the repository name IF the print_image_id exists.
-	@docker images --format '{{.ID}} {{.Repository}}' | grep -w "$(IMAGE_ID)" | awk '{printf "%s", $$2}'
+	@docker images --format '{{.ID}} {{.Repository}}' | grep "$(IMAGE_ID)" | cut -d' ' -f2
+
+.PHONY: debug_repository_name
+debug_repository_name: ##Debug the repository name lookup
+	@echo "DEBUG: IMAGE_ID=[$(IMAGE_ID)]"
+	@echo "DEBUG: IMAGE_ID length: $(echo '$(IMAGE_ID)' | wc -c)"
+	@echo "DEBUG: IMAGE_ID hex dump: $(echo '$(IMAGE_ID)' | od -c)"
+	@echo "DEBUG: DOCKER_IMAGE=$(DOCKER_IMAGE)"
+	@echo "DEBUG: All docker images:"
+	@docker images --format '{{.ID}} {{.Repository}}'
+	@echo "DEBUG: Grep result for IMAGE_ID:"
+	@docker images --format '{{.ID}} {{.Repository}}' | grep "$(IMAGE_ID)" || echo "No match found"
+	@echo "DEBUG: Final repository name:"
+	@docker images --format '{{.ID}} {{.Repository}}' | grep "$(IMAGE_ID)" | cut -d' ' -f2
+
+.PHONY: debug_image_id_raw
+debug_image_id_raw: ##Debug the raw IMAGE_ID variable
+	@echo "RAW IMAGE_ID: $(IMAGE_ID)"
 
 .PHONY: composebuild-prod
 composebuild-prod: ##Docker compose build. No cache by default.
@@ -124,13 +141,15 @@ delete_matching_images: ## Delete all local images with the DOCKER_IMAGE name.
 .PHONY: save_image_as_tar
 save_image_as_tar: ## Save the Docker image as a zip file
 	@echo "Saving Docker image $(DOCKER_IMAGE) with ID $(IMAGE_ID) as a tar file..."
-	# Short version, without writing to disk 
-	docker save $(shell make get_repository_name):latest | pigz > $(DOCKER_IMAGE).tar.gz
-	
-	#Long version, with writing to disk
-	#docker save -o $(DOCKER_IMAGE).tar $(shell make get_repository_name):latest
-	#pigz $(DOCKER_IMAGE).tar
-
+	$(eval REPO_NAME := $(shell docker images --format '{{.ID}} {{.Repository}}' | grep "$(IMAGE_ID)" | cut -d' ' -f2))
+	@echo "DEBUG: Repository name found: '$(REPO_NAME)'"
+	@if [ -z "$(REPO_NAME)" ]; then \
+		echo "ERROR: Repository name is empty! IMAGE_ID=$(IMAGE_ID)"; \
+		echo "Available images:"; \
+		docker images --format '{{.ID}} {{.Repository}}'; \
+		exit 1; \
+	fi
+	docker save $(REPO_NAME):latest | pigz > $(DOCKER_IMAGE).tar.gz
 	@echo "Docker image saved as $(DOCKER_IMAGE).tar.gz"
 
 

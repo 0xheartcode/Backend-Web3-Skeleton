@@ -4,7 +4,11 @@ services:
     build:
       context: ../../
       dockerfile: ./utils/dockerfiles/Dockerfile.standard
+      labels:
+        - "com.docker.compose.project=${COMPOSE_PROJECT_NAME}"
+        - "com.example.description=express container nginx"
     labels:
+      - "com.docker.compose.project=${COMPOSE_PROJECT_NAME}"
       - "com.example.description=express container nginx"
     ports:
       -  ${PORT}:80
